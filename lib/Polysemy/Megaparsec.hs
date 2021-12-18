@@ -3,6 +3,25 @@ Module: Polysemy.Megaparsec
 Description: Adapters for running 'Text.Megaparsec' parsers in polysemy code
 Copyright: (c) Danil Doroshin, 2021
 Maintainer: ddddanil5555@gmail.com
+
+This module provides adapters for the 'Text.Megaparsec.ParsecT' monad inside 'Polysemy'.
+
+The nature of parsers makes them badly suited for an effect: they are very local, favour
+being run explicitly, and they feel most comfortable to use at the head of a monad stack.
+The stack tail, however, can greatly benefit from the effects-based approach.
+
+The names in this module will collide with the ones from 'Text.Megaparsec'. It also contains
+runners that are logically replaced with the adapters form this module. You can hide
+them like this:
+
+@
+import Text.Megaparsec hiding
+  ( Parsec, ParsecT
+  , runParser, runParser'
+  , parse, parseMaybe
+  , runParserT, runParserT'
+  )
+@
 -}
 module Polysemy.Megaparsec (
 -- * Parsec type
