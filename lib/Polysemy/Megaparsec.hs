@@ -1,7 +1,18 @@
+{-|
+Module: Polysemy.Megaparsec
+Description: Adapters for running 'Text.Megaparsec' parsers in polysemy code
+Copyright: (c) Danil Doroshin, 2021
+Maintainer: ddddanil5555@gmail.com
+-}
 module Polysemy.Megaparsec (
+-- * Parsec type
   Parsec
 , lift
+-- * Adapters
+--
+-- ** Basic
 , runParser, runParser', runParserMaybe
+-- ** Effectful
 , runParserState, runParserWithError
 ) where
 
