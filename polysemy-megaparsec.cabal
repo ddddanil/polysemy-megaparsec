@@ -50,6 +50,7 @@ common common-options
     , polysemy
     , polysemy-plugin
     , megaparsec
+    , transformers
     -- , profunctors
     -- , either
     -- , singletons
@@ -59,6 +60,7 @@ common common-options
 library
   import:           common-options
   exposed-modules:
+      Polysemy.Megaparsec
   other-modules:
   hs-source-dirs:     lib
   build-depends:
