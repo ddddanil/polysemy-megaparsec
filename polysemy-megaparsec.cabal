@@ -1,0 +1,79 @@
+cabal-version: 2.2
+name:          polysemy-megaparsec
+version:       0.0
+
+common common-options
+  default-language:   Haskell2010
+  default-extensions:
+      NoImplicitPrelude
+    , OverloadedStrings
+    , OverloadedLabels
+    , OverloadedLists
+    , DerivingStrategies
+    , GeneralizedNewtypeDeriving
+    , DeriveAnyClass
+    , DeriveGeneric
+    , DeriveFunctor
+    , DeriveDataTypeable
+    , DataKinds
+    , ConstraintKinds
+    , PolyKinds
+    , RankNTypes
+    , GADTs
+    , KindSignatures
+    , FlexibleInstances
+    , FlexibleContexts
+    , NoMonomorphismRestriction
+    , AllowAmbiguousTypes
+    , TypeApplications
+    , TypeOperators
+    , TypeFamilies
+    , MultiParamTypeClasses
+    , FunctionalDependencies
+    , NumericUnderscores
+    , BangPatterns
+    , PatternSynonyms
+    , ViewPatterns
+    , LambdaCase
+    , BlockArguments
+    , RecordWildCards
+    , ScopedTypeVariables
+    , DuplicateRecordFields
+    , TemplateHaskell
+  ghc-options:        -Wall
+                      -Wno-type-defaults
+                      -fplugin=Polysemy.Plugin
+                      -fwrite-ide-info
+                      -hiedir=.hie
+  build-depends:
+      base
+    , polysemy
+    , polysemy-plugin
+    , megaparsec
+    -- , profunctors
+    -- , either
+    -- , singletons
+    -- , singletons-th
+    -- , singletons-base
+
+library
+  import:           common-options
+  exposed-modules:
+  other-modules:
+  hs-source-dirs:     lib
+  build-depends:
+
+test-suite lib
+  import:             common-options
+  main-is:            Main.hs
+  other-modules:
+  hs-source-dirs:     test
+  type:               exitcode-stdio-1.0
+  build-depends:
+      polysemy-megaparsec
+    -- Testing
+    , tasty
+    , tasty-hunit
+    , tasty-expected-failure
+    , tasty-quickcheck
+    , polysemy-check
