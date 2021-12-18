@@ -69,6 +69,8 @@ test-suite lib
   import:             common-options
   main-is:            Main.hs
   other-modules:
+      Parsers
+    , Suite.Parser
   hs-source-dirs:     test
   type:               exitcode-stdio-1.0
   build-depends:
