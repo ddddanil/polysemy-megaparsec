@@ -1,6 +1,6 @@
 cabal-version: 2.2
 name:          polysemy-megaparsec
-version:       0.0
+version:       0.1
 
 common common-options
   default-language:   Haskell2010
@@ -51,8 +51,8 @@ common common-options
     , polysemy-plugin
     , megaparsec
     , transformers
+    , either
     -- , profunctors
-    -- , either
     -- , singletons
     -- , singletons-th
     -- , singletons-base
