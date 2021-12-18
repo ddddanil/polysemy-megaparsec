@@ -30,9 +30,9 @@ module Polysemy.Megaparsec (
 -- * Adapters
 --
 -- ** Basic
-, runParser, runParser', runParserMaybe
+, parse, parse', parseMaybe
 -- ** Effectful
-, runParserState, runParserWithError
+, parseS, parseE
 ) where
 
 import Prelude
@@ -57,37 +57,37 @@ type Parsec e s r a = MP.ParsecT e s (Sem r) a
 lift :: Sem r a -> Parsec e s r a
 lift = T.lift
 
--- | @runParser p source input@ runs parser @p@ on @input@. @source@ is only used in error messages and may be empty.
+-- | @parse p source input@ runs parser @p@ on @input@. @source@ is only used in error messages and may be empty.
 -- returns a potentially failed result
 --
--- Using 'runParserWithError' can allow for more convenient error handling.
-runParser :: (Subsume rP rM) => Parsec e s rP a -> String -> s -> Sem rM (Either (MP.ParseErrorBundle s e) a)
-runParser p n s = subsume_ $ MP.runParserT p n s
+-- Using 'parseE' can allow for more convenient error handling.
+parse :: (Subsume rP rM) => Parsec e s rP a -> String -> s -> Sem rM (Either (MP.ParseErrorBundle s e) a)
+parse p n s = subsume_ $ MP.runParserT p n s
 
--- | The funcion is similar to 'runParser' with the difference that it gives a direct access to the underlying state.
+-- | The funcion is similar to 'parse' with the difference that it gives a direct access to the underlying state.
 -- It is useful with combination of 'Text.Megaparsec.getParserState' and 'Text.Megaparsec.updateParserState'.
 --
--- If you want to handle state externally, consider using 'runParserState'
-runParser' :: (Subsume rP rM) => Parsec e s rP a -> MP.State s e -> Sem rM (MP.State s e, Either (MP.ParseErrorBundle s e) a)
-runParser' p s = subsume_ $ MP.runParserT' p s
+-- If you want to handle state externally, consider using 'parseS'
+parse' :: (Subsume rP rM) => Parsec e s rP a -> MP.State s e -> Sem rM (MP.State s e, Either (MP.ParseErrorBundle s e) a)
+parse' p s = subsume_ $ MP.runParserT' p s
 
 -- | @parseMaybe p input@ runs the parser @p@ on input and returns the result inside 'Just' on success and 'Nothing' on failure.
 -- This function also parses 'MP.eof', so if the parser doesn't consume all of its input, it will fail.
 --
 -- The function is supposed to be useful for lightweight parsing, where error messages (and thus file names) are not important
 -- and entire input should be consumed. For example, it can be used for parsing of a single number according to a specification of its format.
-runParserMaybe :: (Subsume rP rM, Ord e, MP.Stream s) => Parsec e s rP a -> s -> Sem rM (Maybe a)
-runParserMaybe p s = rightToMaybe <$> runParser (p <* MP.eof) "" s
+parseMaybe :: (Subsume rP rM, Ord e, MP.Stream s) => Parsec e s rP a -> s -> Sem rM (Maybe a)
+parseMaybe p s = rightToMaybe <$> parse (p <* MP.eof) "" s
 
 -- | This adapter allows threading of external 'State' effect into the parser.
 --
 -- __Note__: the parser still uses its own State monad inside. They are only synchronised upon entry and exit of this adapter.
 --
 -- @since 0.2
-runParserState :: (Subsume rP rM, Member (State (MP.State s e)) rM) => Parsec e s rP a -> Sem rM (Either (MP.ParseErrorBundle s e) a)
-runParserState p = do
+parseS :: (Subsume rP rM, Member (State (MP.State s e)) rM) => Parsec e s rP a -> Sem rM (Either (MP.ParseErrorBundle s e) a)
+parseS p = do
   s <- get
-  (s', a) <- runParser' p s
+  (s', a) <- parse' p s
   put s'
   return a
 
@@ -96,6 +96,6 @@ runParserState p = do
 -- __Note__: the parser still uses its own error handling monad inside. They are only synchronised upon the exit of this adapter.
 --
 -- @since 0.2
-runParserWithError :: (Subsume rP rM, Member (Error (MP.ParseErrorBundle s e)) rM) => Parsec e s rP a -> String -> s -> Sem rM a
-runParserWithError p n s = runParser p n s >>= fromEither
+parseE :: (Subsume rP rM, Member (Error (MP.ParseErrorBundle s e)) rM) => Parsec e s rP a -> String -> s -> Sem rM a
+parseE p n s = parse p n s >>= fromEither
 
