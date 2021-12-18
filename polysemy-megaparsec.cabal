@@ -1,6 +1,6 @@
 cabal-version: 2.2
 name:          polysemy-megaparsec
-version:       0.1
+version:       0.2
 
 common common-options
   default-language:   Haskell2010
@@ -73,6 +73,7 @@ test-suite lib
   type:               exitcode-stdio-1.0
   build-depends:
       polysemy-megaparsec
+    , parser-combinators
     -- Testing
     , tasty
     , tasty-hunit
