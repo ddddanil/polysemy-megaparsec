@@ -2,6 +2,7 @@
 Module: Polysemy.Megaparsec
 Description: Adapters for running 'Text.Megaparsec' parsers in polysemy code
 Copyright: (c) Danil Doroshin, 2021
+License: MIT
 Maintainer: ddddanil5555@gmail.com
 
 This module provides adapters for the 'Text.Megaparsec.ParsecT' monad inside 'Polysemy'.
