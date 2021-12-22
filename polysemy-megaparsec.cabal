@@ -76,9 +76,12 @@ test-suite lib
   build-depends:
       polysemy-megaparsec
     , parser-combinators
+    , text
     -- Testing
     , tasty
-    , tasty-hunit
+    , tasty-hedgehog
     , tasty-expected-failure
     , tasty-quickcheck
+    , quickcheck-instances
     , polysemy-check
+    , polysemy-test

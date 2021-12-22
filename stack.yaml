@@ -40,6 +40,7 @@ resolver: lts-18.6
 #
 extra-deps:
 - polysemy-check-0.8.1.0@sha256:5cce3ae162d2f8d8f629397daa28ec5e425f72d357afeb4fe994e102425f2383,2648
+- polysemy-test-0.3.1.7@sha256:aa081273181b5a943969dd2757a92c973e17c8c4bfcd7cca01132f951f8ab824,4739
 # - singletons-base-3.1@sha256:c7c83b0da1ad6f02129d900ca8feaf6ae463a73b1935bdc199cfbacf14db31a1,7073
 #   - polysemy-test
 

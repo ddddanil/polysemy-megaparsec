@@ -1,50 +1,35 @@
 {-# LANGUAGE QuantifiedConstraints #-}
-{-# LANGUAGE IncoherentInstances #-}
 module Suite.Parser (testTree) where
 
 import Prelude
+import Data.Text
 import Polysemy
-import Polysemy.State
+import Polysemy.Input
 import Polysemy.Check
+import Polysemy.Test
 import Polysemy.Megaparsec
 import Test.Tasty
-import Test.Tasty.HUnit
-import Test.Tasty.QuickCheck
+import Test.Tasty.QuickCheck hiding ((===))
+import Test.QuickCheck.Instances.Text ()
 import Parsers
 
 testTree :: TestTree
 testTree = testGroup "Polysemy.Megaparsec"
-  [ testProperty "Parse number" parseNumberTest
+  [ unitTest "parse number" test_parseNumber
+  , unitTest "parse keyword choice via Input" test_parseChoice
   ]
 
+test_parseNumber :: UnitTest
+test_parseNumber = runTestAuto $ do
+  i <- embedFinal . generate $ arbitrary @Integer
+  res <- parseMaybe int (pack . show $ i)
+  res === Just i
 
-parseNumber :: forall r. String -> Sem r (Maybe Integer)
-parseNumber = parseMaybe @r int
-
-parseNumberLaw
-  :: forall s r f effs res
-   . ( res ~ Maybe s
-     , effs ~ '[State Bool] -- synthesized effects for testing
-     , Arbitrary s
-     , Eq s, Show s
-     , s ~ Integer -- Specify result
-     , ArbitraryEff effs r
-     , Members effs r
-     , (forall z. Eq z => Eq (f z))
-     , (forall z. Show z => Show (f z))
-     )
-  => (forall a. Sem r (res, a) -> IO (f (res, a)))
-  -> Property
-parseNumberLaw = prepropLaw @effs program
-  where
-    program :: Gen (Sem r res, Sem r res)
-    program = do
-      i <- arbitrary @Integer
-      pure (parseNumber (show i)
-           , pure (Just i))
-
-parseNumberTest :: Property
-parseNumberTest = parseNumberLaw interpreter
-  where
-    interpreter = pure . pure @Maybe . run . evalState True
+test_parseChoice :: UnitTest
+test_parseChoice = runTestAuto $ do
+  ss <- embedFinal . generate $ arbitrary @[Text]
+  correct <- embedFinal . generate $ elements ss
+  runInputConst ss $ do
+    res <- parseMaybe keywordsChoice correct
+    res === Just correct
 
