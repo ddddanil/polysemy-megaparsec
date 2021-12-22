@@ -17,6 +17,7 @@ testTree :: TestTree
 testTree = testGroup "Polysemy.Megaparsec"
   [ unitTest "parse number" test_parseNumber
   , unitTest "parse keyword choice via Input" test_parseChoice
+  , unitTest "parse keyword choice wrong" test_parseChoice_wrong
   ]
 
 test_parseNumber :: UnitTest
@@ -32,4 +33,12 @@ test_parseChoice = runTestAuto $ do
   runInputConst ss $ do
     res <- parseMaybe keywordsChoice correct
     res === Just correct
+
+test_parseChoice_wrong :: UnitTest
+test_parseChoice_wrong = runTestAuto $ do
+  ss <- embedFinal . generate $ arbitrary @[Text]
+  correct <- embedFinal . generate $ arbitrary @Text `suchThat` (`notElem` ss)
+  runInputConst ss $ do
+    res <- parseMaybe keywordsChoice correct
+    res === Nothing
 
