@@ -22,22 +22,22 @@ testTree = testGroup "Polysemy.Megaparsec"
 
 test_parseNumber :: UnitTest
 test_parseNumber = runTestAuto $ do
-  i <- embedFinal . generate $ arbitrary @Integer
+  i <- embed . generate $ arbitrary @Integer
   res <- parseMaybe int (pack . show $ i)
   res === Just i
 
 test_parseChoice :: UnitTest
 test_parseChoice = runTestAuto $ do
-  ss <- embedFinal . generate $ arbitrary @[Text]
-  correct <- embedFinal . generate $ elements ss
+  ss <- embed . generate $ arbitrary @[Text]
+  correct <- embed . generate $ elements ss
   runInputConst ss $ do
     res <- parseMaybe keywordsChoice correct
     res === Just correct
 
 test_parseChoice_wrong :: UnitTest
 test_parseChoice_wrong = runTestAuto $ do
-  ss <- embedFinal . generate $ arbitrary @[Text]
-  correct <- embedFinal . generate $ arbitrary @Text `suchThat` (`notElem` ss)
+  ss <- embed . generate $ arbitrary @[Text]
+  correct <- embed . generate $ arbitrary @Text `suchThat` (`notElem` ss)
   runInputConst ss $ do
     res <- parseMaybe keywordsChoice correct
     res === Nothing
